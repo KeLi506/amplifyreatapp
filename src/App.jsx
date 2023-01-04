@@ -93,8 +93,8 @@ function App() {
             <br />
             {
               showAddNote ? (
-                <AddNote id='addNote' onUpload={() => {
-                  setShowAddNewNote(false)
+                <AddNote onUpload={() => {
+                  setShowAddNewNote(false);
                   fetchNotes();
                 }} />
               ): (
@@ -164,20 +164,18 @@ const AddNote = ({ onUpload }) => {
     };
     await API.graphql(graphqlOperation(createNote, {input: createNoteInput}));
     onUpload();
-  }
+  };
 
   return (
     <div className='newNote'>
       <TextField 
         label='title' 
-        id='title'
         value={noteData.title}
         onChange={e => setNoteData({...noteData, title: e.target.value})}
       />
 
       <TextField 
         label='description' 
-        id='description'
         value={noteData.description}
         onChange={e => setNoteData({...noteData, description: e.target.value})}
       />
@@ -186,5 +184,5 @@ const AddNote = ({ onUpload }) => {
         <PublishIcon />
       </IconButton>
     </div>
-  )
-}
+  );
+};
