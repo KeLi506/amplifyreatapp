@@ -18,6 +18,7 @@ import Button from '@mui/material/Button';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import PublishIcon from '@material-ui/icons/Publish';
+import * as mutations from './graphql/mutations';
 
 
 Amplify.configure(awsconfig);
@@ -75,9 +76,9 @@ function App() {
             </div> */}
             
             <div className='noteList'>
-              { notes.map(note => {
+              { notes.map((note, index) => {
                 return (
-                  <Paper variant="outlined" elevation={2}>
+                  <Paper key={index} variant="outlined" elevation={0}>
                     <div className='noteCard'>
                       <div className='noteTitle'>{note.title}</div>
                       <div className='noteDescreption'>{note.description}</div>
@@ -89,8 +90,7 @@ function App() {
                 )
               })}
             </div>
-            
-            <br />
+
             {
               showAddNote ? (
                 <AddNote onUpload={() => {
@@ -185,4 +185,27 @@ const AddNote = ({ onUpload }) => {
       </IconButton>
     </div>
   );
+};
+
+
+const RomoveNote = ({id}) => {
+
+  console.log("delete", id);
+  // const confirmed = window.confirm(
+  //   "Are you sure to delete this note?"
+  // );
+
+  // if (!confirmed) {
+  //   return;
+  // }
+
+  // setIsDeleteing(true);
+
+  // const deleteNoteInput = {
+  //   id="",
+  //   title="",
+  //   description="",
+  // }
+  // await API.graphql(graphqlOperation(deleteNote, {input: deleteNoteInput}));
+
 };
