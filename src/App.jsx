@@ -1,14 +1,14 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import { Amplify, API, graphqlOperation } from 'aws-amplify';
+import { Amplify, API, graphqlOperation, Storage } from 'aws-amplify';
 import awsconfig from './aws-exports';
-import { TextField, withAuthenticator } from '@aws-amplify/ui-react';
+import { TextField, withAuthenticator, AmplifySignOut } from '@aws-amplify/ui-react';
 import { Authenticator } from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
 import { listNotes } from './graphql/queries';
-import { useState } from 'react';
-import { updateNote, createNote, deleteNote } from './graphql/mutations';
+
+import { updateNote, createNote as createNoteMutation, deleteNote as deleteNoteMutation } from './graphql/mutations';
 
 import { v4 as uuid } from 'uuid';
 
@@ -18,14 +18,15 @@ import Button from '@mui/material/Button';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import PublishIcon from '@material-ui/icons/Publish';
-import * as mutations from './graphql/mutations';
-
 
 Amplify.configure(awsconfig);
+
+const initialFormState = { name: '', description: ''};
 
 function App() {
   // userState(): saving the state
   const [ notes, setNotes ] = useState([]);
+  const [ formData, setFormData ] = useState(initialFormState);
 
   const [ showAddNote, setShowAddNewNote ] = useState(false);
 
@@ -48,6 +49,12 @@ function App() {
     } catch (error) {
         console.log('error on fetching notes', error);
     }
+  }
+
+  async function deleteNote({id}) {
+    const newNoteArray = notes.filter(note => note.id != id);
+    setNotes(newNoteArray);
+    await API.graphql({ query: deleteNoteMutation, variables: { input: {id}}});
   }
 
   return (
@@ -76,13 +83,13 @@ function App() {
             </div> */}
             
             <div className='noteList'>
-              { notes.map((note, index) => {
+              { notes.map((note) => {
                 return (
-                  <Paper key={index} variant="outlined" elevation={0}>
+                  <Paper key={note.id} variant="outlined" elevation={0}>
                     <div className='noteCard'>
                       <div className='noteTitle'>{note.title}</div>
                       <div className='noteDescreption'>{note.description}</div>
-                      <Button variant="outlined" startIcon={<DeleteIcon />}>
+                      <Button variant="outlined" startIcon={<DeleteIcon />} onClick={()=> deleteNote(note)}>
                         Delete
                       </Button>
                     </div>
@@ -162,7 +169,7 @@ const AddNote = ({ onUpload }) => {
       title,
       description,
     };
-    await API.graphql(graphqlOperation(createNote, {input: createNoteInput}));
+    await API.graphql(graphqlOperation(createNoteMutation, {input: createNoteInput}));
     onUpload();
   };
 

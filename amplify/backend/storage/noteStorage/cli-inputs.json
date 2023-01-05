@@ -1,0 +1,14 @@
+{
+  "resourceName": "noteStorage",
+  "policyUUID": "6555ed91",
+  "bucketName": "note-storage",
+  "storageAccess": "auth",
+  "guestAccess": [],
+  "authAccess": [
+    "CREATE_AND_UPDATE",
+    "READ",
+    "DELETE"
+  ],
+  "triggerFunction": "NONE",
+  "groupAccess": {}
+}
