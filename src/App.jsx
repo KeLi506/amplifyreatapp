@@ -30,12 +30,15 @@ function App() {
 
   const [ showAddNote, setShowAddNewNote ] = useState(false);
 
-  // use effect hook to trigger this fetchNotes every time in app(), useEffect() can data fetching, setting up a subscription, chaning the DOM, logging
+  // use effect hook to trigger this fetchNotes every time in app(), 
+  // useEffect() can data fetching, setting up a subscription, chaning the DOM, 
+  // logging
   useEffect(() => {
     fetchNotes();  
   }, []);
 
-  // get all the notes from the database into notes state, async() can wait untill promise be finished
+  // using API class to sent a query to Graphql API and retrieve a list of notes
+  // async() can wait untill promise be finished
   const fetchNotes = async() => {
     try {
       // The await operator is used to wait for a Promise and get its fulfillment value.
