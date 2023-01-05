@@ -26,14 +26,14 @@ const initialFormState = { name: '', description: ''};
 function App() {
   // userState(): saving the state
   const [ notes, setNotes ] = useState([]);
-  const [ formData, setFormData ] = useState(initialFormState);
+  // const [ formData, setFormData ] = useState(initialFormState);
 
   const [ showAddNote, setShowAddNewNote ] = useState(false);
 
   // use effect hook to trigger this fetchNotes every time in app(), useEffect() can data fetching, setting up a subscription, chaning the DOM, logging
   useEffect(() => {
     fetchNotes();  
-  }, []); 
+  }, []);
 
   // get all the notes from the database into notes state, async() can wait untill promise be finished
   const fetchNotes = async() => {
@@ -51,6 +51,21 @@ function App() {
     }
   }
 
+  // same as above
+  // async function fetchNotes() {
+  //   const apiData = await API.graphql({query: listNotes});
+  //   setNotes(apiData.data.listNotes.items);
+  // }
+
+  // if only wants to create a note
+  // async function createNote() {
+  //   if (!FormData.title || !FormData.description) return;
+  //   await API.graphql({ query: createNoteMutation, variables: { input: formData}});
+  //   setNotes([ ...notes, formData]);
+  //   setFormData(initialFormState); 
+  // }
+
+  // to delete the note according id
   async function deleteNote({id}) {
     const newNoteArray = notes.filter(note => note.id != id);
     setNotes(newNoteArray);
@@ -60,26 +75,25 @@ function App() {
   return (
     <Authenticator>
       {({ signOut }) => (
-        
           <div className="App">
             <header className="App-header">
               <h2 className='wel'>Notes App</h2>
             </header>
 
             {/* <div className='add'>
-              <form>
-                <div className='form-control'>
-                  <label id='title' className='title'>Title</label>
-                  <input type="text" id='titletext' placeholder='Add title here'/>
-                </div>
+              <input 
+                onChange={e => setFormData({ ...formData, 'title': e.target.value})}
+                placeholder='Note title'
+                value={formData.title}
+              />
 
-                <div className='form-control'>
-                  <label id='descript' className='descript'>Descript</label>
-                  <input type='text' id='descripttext'  placeholder='Add descript here'/>
-                </div>
+              <input 
+                onChange={e => setFormData({ ...formData, 'description': e.target.value})}
+                placeholder='Note description'
+                value={formData.description}
+              />
 
-                <button id='addNote' className='addNote'>Add Notes</button>
-              </form>
+              <button onClick={createNote}>Create Note</button>
             </div> */}
             
             <div className='noteList'>
@@ -117,35 +131,6 @@ function App() {
   );
 }
 
-// // declare
-// let titletext = document.getElementById("#titletext");
-// let descripttext = document.getElementById("#descripttext");
-// let addNote = document.querySelector(".addNote");
-// let noteElem = document.querySelector(".notes");
-
-// // function using innerHTML to get user input
-// if (titletext) {
-//   console.log(titletext, descripttext);
-//   addNote.addEventListener("click", (e)=> {
-//   // to get tile from user input
-//     e.preventDefault();
-//     addNotes();
-//   })
-// }
-// // create a new div and add new title and descript into this div
-// function addNotes() {
-//   let titlevalue = titletext.value;
-//   let descriptvalue = descripttext.value;
-//   let c = document.createElement("div");
-
-//   c.classList.add("c");
-  
-//   c.innerHTML='<h3>${titlevalue}</h3> <p>${descriptvalue}</p> <button className="del">Delete</button>'
-//   noteElem.appendChild(c);
-  
-// }
-
-
 export default withAuthenticator(App);
 
 const AddNote = ({ onUpload }) => {
@@ -164,6 +149,7 @@ const AddNote = ({ onUpload }) => {
     // const [mp3Data, setMp3Data] = useState();
     // const { key } = await Storage.put('${uuid()}.mp3', mp3Data, { contentType: 'audio/mp3'});
     
+    // init what the information need to create
     const createNoteInput = {
       id: uuid(),
       title,
@@ -192,27 +178,4 @@ const AddNote = ({ onUpload }) => {
       </IconButton>
     </div>
   );
-};
-
-
-const RomoveNote = ({id}) => {
-
-  console.log("delete", id);
-  // const confirmed = window.confirm(
-  //   "Are you sure to delete this note?"
-  // );
-
-  // if (!confirmed) {
-  //   return;
-  // }
-
-  // setIsDeleteing(true);
-
-  // const deleteNoteInput = {
-  //   id="",
-  //   title="",
-  //   description="",
-  // }
-  // await API.graphql(graphqlOperation(deleteNote, {input: deleteNoteInput}));
-
 };
