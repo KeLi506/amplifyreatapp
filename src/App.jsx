@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import logo from './logo.svg';
+// import logo from './logo.svg';
 import './App.css';
-import { Amplify, API, graphqlOperation, Storage } from 'aws-amplify';
+import { Amplify, API, graphqlOperation } from 'aws-amplify';
 import awsconfig from './aws-exports';
-import { TextField, withAuthenticator, AmplifySignOut } from '@aws-amplify/ui-react';
+import { TextField, withAuthenticator } from '@aws-amplify/ui-react';
 import { Authenticator } from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
 import { listNotes } from './graphql/queries';
 
-import { updateNote, createNote as createNoteMutation, deleteNote as deleteNoteMutation } from './graphql/mutations';
+import { createNote as createNoteMutation, deleteNote as deleteNoteMutation } from './graphql/mutations';
 
 import { v4 as uuid } from 'uuid';
-
 
 import { Paper, IconButton } from '@mui/material';
 import Button from '@mui/material/Button';
@@ -21,7 +20,7 @@ import PublishIcon from '@material-ui/icons/Publish';
 
 Amplify.configure(awsconfig);
 
-const initialFormState = { name: '', description: ''};
+// const initialFormState = { name: '', description: ''};
 
 function App() {
   // userState(): saving the state
@@ -70,7 +69,7 @@ function App() {
 
   // to delete the note according id
   async function deleteNote({id}) {
-    const newNoteArray = notes.filter(note => note.id != id);
+    const newNoteArray = notes.filter(note => note.id !== id);
     setNotes(newNoteArray);
     await API.graphql({ query: deleteNoteMutation, variables: { input: {id}}});
   }
@@ -114,19 +113,21 @@ function App() {
                 )
               })}
             </div>
+            
+            <div className='addNote'>
+              {
+                showAddNote ? (
+                  <AddNote onUpload={() => {
+                    setShowAddNewNote(false);
+                    fetchNotes();
+                  }} />
+                ): (
+                <IconButton onClick={() => setShowAddNewNote(true)}>
+                  <AddIcon />
+                </IconButton>
+             )}
+            </div>
 
-            {
-              showAddNote ? (
-                <AddNote onUpload={() => {
-                  setShowAddNewNote(false);
-                  fetchNotes();
-                }} />
-              ): (
-              <IconButton onClick={() => setShowAddNewNote(true)}>
-                <AddIcon />
-              </IconButton>
-            )}
-              
             <button className='signOut' onClick={signOut}>Sign Out</button>
           </div>
       )}
